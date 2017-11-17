@@ -5,6 +5,8 @@
 import pandas as pd
 import numpy as np
 from sklearn import  preprocessing
+from xgboost.sklearn import XGBClassifier
+from sklearn.grid_search import GridSearchCV
 import xgboost as xgb
 import lightgbm as lgb    
 path='./'
@@ -47,7 +49,7 @@ for mall in mall_list:
     lbl = preprocessing.LabelEncoder()
     lbl.fit(list(df_train['shop_id'].values))
     df_train['label'] = lbl.transform(list(df_train['shop_id'].values))    
-    num_class=df_train['label'].max()+1    
+    num_classes=df_train['label'].max()+1
     params = {
             'objective': 'multi:softmax',
             'eta': 0.1,
@@ -55,7 +57,7 @@ for mall in mall_list:
             'eval_metric': 'merror',
             'seed': 0,
             'missing': -999,
-            'num_class':num_class,
+            'num_class':num_classes,
             'silent' : 1
             }
     print(train1.columns)
@@ -64,12 +66,26 @@ for mall in mall_list:
     print(df_test[feature])
     xgbtrain = xgb.DMatrix(df_train[feature], df_train['label'])
     xgbtest = xgb.DMatrix(df_test[feature])
-    watchlist = [ (xgbtrain,'train'), (xgbtrain, 'test') ]
-    num_rounds=100
-    model = xgb.train(params, xgbtrain, num_rounds, watchlist, early_stopping_rounds=15)
-    df_test['label']=model.predict(xgbtest)
-    df_test['shop_id']=df_test['label'].apply(lambda x:lbl.inverse_transform(int(x)))
-    r=df_test[['row_id','shop_id']]
-    result=pd.concat([result,r])
-    result['row_id']=result['row_id'].astype('int')
-    result.to_csv(path+'sub20.csv',index=False)
+    # watchlist = [ (xgbtrain,'train'), (xgbtrain, 'test') ]
+    # num_rounds=100
+
+    param_test={
+        'learning_rate' : [0.06,0.08,0.1],
+        'max_depth':[5,7,9]
+    }
+
+    gsearch1 = GridSearchCV(estimator = XGBClassifier(objective= 'multi:softmax', seed=0,
+                                                      missing = -999,  silent = 1),
+    param_grid = param_test, scoring='roc_auc',n_jobs=4,iid=False, cv=5)
+    gsearch1.fit(df_train[feature],df_train['label'])
+    print('输出参数')
+    print(gsearch1.grid_scores_)
+    print(gsearch1.best_params_)
+    print(gsearch1.best_score_)
+    # model = xgb.train(params, xgbtrain, num_rounds, watchlist, early_stopping_rounds=15)
+    # df_test['label']=model.predict(xgbtest)
+    # df_test['shop_id']=df_test['label'].apply(lambda x:lbl.inverse_transform(int(x)))
+    # r=df_test[['row_id','shop_id']]
+    # result=pd.concat([result,r])
+    # result['row_id']=result['row_id'].astype('int')
+    # result.to_csv(path+'sub20.csv',index=False)

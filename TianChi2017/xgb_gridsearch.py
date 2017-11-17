@@ -10,9 +10,9 @@ from sklearn.grid_search import GridSearchCV
 import xgboost as xgb
 import lightgbm as lgb    
 path='./'
-df=pd.read_csv(path+u'训练数据-ccf_first_round_user_shop_behavior.csv')
-shop=pd.read_csv(path+u'训练数据-ccf_first_round_shop_info.csv')
-test=pd.read_csv(path+u'AB榜测试集-evaluation_public.csv')
+df=pd.read_csv(path+u'train-ccf_first_round_user_shop_behavior.csv')
+shop=pd.read_csv(path+u'train-ccf_first_round_shop_info.csv')
+test=pd.read_csv(path+u'AB-evaluation_public.csv')
 df=pd.merge(df,shop[['shop_id','mall_id']],how='left',on='shop_id')
 df['time_stamp']=pd.to_datetime(df['time_stamp'])
 train=pd.concat([df,test])
@@ -78,7 +78,7 @@ for mall in mall_list:
                                                       missing = -999,  silent = 1),
     param_grid = param_test, scoring='roc_auc',n_jobs=4,iid=False, cv=5)
     gsearch1.fit(df_train[feature],df_train['label'])
-    print('输出参数')
+    print('Print Parameters')
     print(gsearch1.grid_scores_)
     print(gsearch1.best_params_)
     print(gsearch1.best_score_)

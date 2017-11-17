@@ -60,10 +60,10 @@ for mall in mall_list:
             'num_class':num_classes,
             'silent' : 1
             }
-    print(train1.columns)
+    # print(train1.columns)
     feature=[x for x in train1.columns if x not in ['user_id','label','shop_id','time_stamp','mall_id','wifi_infos']]
-    print(feature)
-    print(df_test[feature])
+    # print(feature)
+    # print(df_test[feature])
     xgbtrain = xgb.DMatrix(df_train[feature], df_train['label'])
     xgbtest = xgb.DMatrix(df_test[feature])
     # watchlist = [ (xgbtrain,'train'), (xgbtrain, 'test') ]

@@ -6,7 +6,9 @@ import pandas as pd
 import numpy as np
 from sklearn import  preprocessing
 import xgboost as xgb
-import lightgbm as lgb    
+import lightgbm as lgb
+
+
 path='./'
 df=pd.read_csv(path+u'train-ccf_first_round_user_shop_behavior.csv')
 shop=pd.read_csv(path+u'train-ccf_first_round_shop_info.csv')

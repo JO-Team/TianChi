@@ -8,9 +8,9 @@ from sklearn import  preprocessing
 import xgboost as xgb
 import lightgbm as lgb    
 path='./'
-df=pd.read_csv(path+u'训练数据-ccf_first_round_user_shop_behavior.csv')
-shop=pd.read_csv(path+u'训练数据-ccf_first_round_shop_info.csv')
-test=pd.read_csv(path+u'AB榜测试集-evaluation_public.csv')
+df=pd.read_csv(path+u'train-ccf_first_round_user_shop_behavior.csv')
+shop=pd.read_csv(path+u'train-ccf_first_round_shop_info.csv')
+test=pd.read_csv(path+u'AB-evaluation_public.csv')
 df=pd.merge(df,shop[['shop_id','mall_id']],how='left',on='shop_id')
 df['time_stamp']=pd.to_datetime(df['time_stamp'])
 train=pd.concat([df,test])
